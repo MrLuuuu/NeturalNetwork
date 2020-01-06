@@ -43,6 +43,7 @@ class NeuralNetowrk:
         return final_output
 if __name__=='__main__':
     MyNN = NeuralNetowrk(10,10,10,0.5)
+    # 点数应该与数据数一致
     input = numpy.arange(-5,5,step=1)
     output = MyNN.query(input)
     print("Input : ",input)
