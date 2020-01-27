@@ -26,8 +26,23 @@ class NeuralNetowrk:
         # 构建隐藏-输出层权重矩阵，行数为隐藏层节点数，列数为输出层节点数
         self.weight_hidden_output = numpy.random.normal(0.0,pow(self.output_node,-0.5),(self.hidden_node,self.output_node))
     # 训练神经网络,优化权重
-    def train(self):
-        pass
+    def train(self,inputs_list,targets_list):
+        # 训练神经网络只需要输入和目标
+        inputs = numpy.array(inputs_list,ndmin=2).T
+        targets = numpy.array(targets_list,ndmin=2).T
+        # 将输入和目标列表变为2维
+        hidden_inputs = numpy.dot(self.weight_input_hidden,inputs_list)
+        hidden_outputs = sigmoid(hidden_inputs)
+        final_inputs = numpy.dot(self.weight_hidden_output,hidden_outputs)
+        final_outputs = sigmoid(final_inputs)
+        output_error= targets_list - final_outputs
+        # 计算误差
+        hidden_error = numpy.dot(self.weight_hidden_output.T,output_error)
+        # 计算隐藏层误差
+        self.weight_hidden_output +=self.learningrate*numpy.dot( output_error*final_outputs*(1.0-final_outputs) , numpy.transpose(hidden_outputs) )
+        # 更新隐藏层到输出层权重
+        self.weight_input_hidden +=self.learningrate*numpy.dot( (hidden_error*hidden_outputs*(1.0-hidden_outputs)) , numpy.transpose(inputs_list) )
+        print('权重更新完成')
     # 查询神经网络，给入输入，获得输出
     # 输入:矩阵
     # 输出：矩阵
@@ -46,6 +61,7 @@ if __name__=='__main__':
     # 点数应该与数据数一致
     input = numpy.arange(-5,5,step=1)
     output = MyNN.query(input)
+    MyNN.train(input,input)
     print("Input : ",input)
     print(output)
     plt.figure(1)
